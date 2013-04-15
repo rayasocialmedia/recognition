@@ -3,6 +3,7 @@ PATH
   specs:
     recognition (0.0.1)
       rails (~> 3.2.13)
+      redis
 
 GEM
   remote: http://rubygems.org/
@@ -45,6 +46,7 @@ GEM
       xpath (~> 1.0.0)
     childprocess (0.3.9)
       ffi (~> 1.0, >= 1.0.11)
+    database_cleaner (0.9.1)
     diff-lcs (1.2.2)
     erubis (2.7.0)
     ffi (1.6.0)
@@ -88,6 +90,7 @@ GEM
     rake (10.0.4)
     rdoc (3.12.2)
       json (~> 1.4)
+    redis (3.0.3)
     rspec-core (2.13.1)
     rspec-expectations (2.13.0)
       diff-lcs (>= 1.1.3, < 2.0)
@@ -126,6 +129,7 @@ PLATFORMS
 
 DEPENDENCIES
   capybara
+  database_cleaner
   jquery-rails
   recognition!
   rspec-rails

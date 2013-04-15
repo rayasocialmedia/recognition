@@ -13,13 +13,15 @@ Gem::Specification.new do |s|
   s.summary     = "Recognize users by giving them points and rewards for their actions"
   s.description = "Recognize users by giving them points and rewards for their actions"
   
-  # s.files = Dir["{app,config,db,lib}/**/*"] + ["MIT-LICENSE", "Rakefile", "README.rdoc"]
-  s.files = `git ls-files`.split("\n")
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE.txt", "Rakefile", "README.rdoc"]
+  # s.files = `git ls-files`.split("\n")
   
   s.add_dependency "rails", "~> 3.2.13"
+  s.add_dependency "redis"
   # s.add_dependency "jquery-rails"
 
   s.add_development_dependency "sqlite3"
-  s.add_development_dependency "capybara"
   s.add_development_dependency "rspec-rails"
+  s.add_development_dependency "database_cleaner"
+  s.add_development_dependency "capybara"
 end

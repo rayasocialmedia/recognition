@@ -3,6 +3,7 @@ ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../dummy/config/environment.rb", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
+require 'database_cleaner'
 
 ENGINE_RAILS_ROOT=File.join(File.dirname(__FILE__), '../')
 
@@ -36,8 +37,18 @@ RSpec.configure do |config|
   # order dependency and want to debug it, you can fix the order by providing
   # the seed, which is printed after each run.
   #     --seed 1234
-  config.order = "random"
+  # config.order = "random"
   
   # Adding Capybara
-  config.include Capybara, :example_group => { :file_path => /\bspec\/integration\// }
+  config.include Capybara::DSL, :example_group => { :file_path => /\bspec\/integration\// }
+  
+  # config.before(:each) do
+  #   DatabaseCleaner.start
+  # end
+  
+  # Cleanup after every run
+  config.before :each do
+    DatabaseCleaner.clean
+    $REDIS.flushall
+  end
 end
