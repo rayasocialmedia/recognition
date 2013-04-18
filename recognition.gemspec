@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary     = "Recognize users by giving them points and rewards for their actions"
   s.description = "Recognize users by giving them points and rewards for their actions"
   
-  s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE.txt", "Rakefile", "README.rdoc"]
+  s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE.txt", "Rakefile", "README.md"]
   # s.files = `git ls-files`.split("\n")
   
   s.add_dependency "rails", "~> 3.2.13"
