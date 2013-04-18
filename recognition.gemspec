@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files = Dir["{app,config,db,lib}/**/*"] + ["LICENSE.txt", "Rakefile", "README.md"]
   # s.files = `git ls-files`.split("\n")
   
-  s.add_dependency "rails", "~> 3.2.13"
+  s.add_dependency "rails", "~> 3.2.9"
   s.add_dependency "redis"
   # s.add_dependency "jquery-rails"
 
