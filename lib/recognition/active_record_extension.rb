@@ -40,6 +40,10 @@ module Recognition
         Database.get_user_points self.id
       end
   
+      def recognition_counter bucket
+        Database.get_user_counter self.id, bucket
+      end
+  
       def add_initial_points
         Database.add_points self, :initial, self.class.recognitions[:initial]
       end

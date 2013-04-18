@@ -32,15 +32,23 @@ module Recognition
     end
     
     def self.get_user_points id
-      points = $REDIS.hget("recognition:user:#{ id }:counters", 'points')
-      points.to_i
+      get_user_counter id, 'points'
+    end
+    
+    def self.get_user_counter id, counter
+      counter = $REDIS.hget("recognition:user:#{ id }:counters", counter)
+      counter.to_i
     end
     
     
     def self.add_points object, action, condition
+      bucket = "M:#{ object.class.to_s.camelize }:#{ action }"
       user = parse_user(object, condition)
       total = parse_amount(condition[:amount]) + parse_amount(condition[:gain]) - parse_amount(condition[:loss])
-      Database.log(user.id, total, "M:#{ object.class.to_s.camelize }:#{ action }")
+      ground_total = user.recognition_counter(bucket) + total
+      if condition[:maximum].nil? || ground_total <= condition[:maximum]
+        Database.log(user.id, total, bucket)
+      end
     end
     
     def self.parse_user object, condition
