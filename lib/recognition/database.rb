@@ -40,9 +40,7 @@ module Recognition
     def self.add_points object, action, condition
       user = parse_user(object, condition)
       total = parse_amount(condition[:amount]) + parse_amount(condition[:gain]) - parse_amount(condition[:loss])
-      puts "Adding points: user: #{ user.id } total: #{ total } M:#{ object.class.to_s.camelize }:#{ action }"
       Database.log(user.id, total, "M:#{ object.class.to_s.camelize }:#{ action }")
-      # Database.record Recognition::Transaction.create(args)
     end
     
     def self.parse_user object, condition
