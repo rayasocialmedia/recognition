@@ -29,14 +29,16 @@ Assuming you have two models User and Post and you want to give users points for
 2 point for deleting posts, can be earned twice
 2 points for visiting their profile, earned once
 
-    # app/models/user.rb
+app/models/user.rb:
+
     class User < ActiveRecord::Base
       attr_accessible :name
       has_many :posts
       acts_as_recognizeable initial: 5
     end
 
-    # app/models/post.rb
+app/models/post.rb:
+
     class Post < ActiveRecord::Base
       attr_accessible :title, :user_id
       belongs_to :user
@@ -44,12 +46,15 @@ Assuming you have two models User and Post and you want to give users points for
       recognize :user, for: :destroy, loss: 2, maximum: 4
     end
 
-    #app/controllers/profiles_controller.rb:
-    recognize :current_user, for: :index, amount: 6, maximum: 12
-    def index
-      @user = User.find(params[:id])
-      respond_to do |format|
-        format.html
+app/controllers/profiles_controller.rb:
+
+    class ProfilesController < ApplicationController
+      recognize :current_user, for: :index, amount: 6, maximum: 12
+      def index
+        @user = User.find(params[:id])
+        respond_to do |format|
+          format.html
+        end
       end
     end
 
