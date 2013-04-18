@@ -1,7 +1,3 @@
-[![Build Status](https://travis-ci.org/rayasocialmedia/recognition.png?branch=master)](https://travis-ci.org/rayasocialmedia/recognition)
-[![Coverage Status](https://coveralls.io/repos/rayasocialmedia/recognition/badge.png?branch=master)](https://coveralls.io/r/rayasocialmedia/recognition)
-
-
 # Recognition
 
 A fully-fledged reward system for Rails 3.1+.
