@@ -44,7 +44,7 @@ module Recognition
     def self.add_points object, action, condition
       bucket = "M:#{ object.class.to_s.camelize }:#{ action }"
       user = parse_user(object, condition)
-      total = parse_amount(condition[:amount]) + parse_amount(condition[:gain]) - parse_amount(condition[:loss])
+      total = parse_amount(condition[:amount], object) + parse_amount(condition[:gain], object) - parse_amount(condition[:loss], object)
       ground_total = user.recognition_counter(bucket) + total
       if condition[:maximum].nil? || ground_total <= condition[:maximum]
         Database.log(user.id, total, bucket)
@@ -69,17 +69,19 @@ module Recognition
       user
     end
     
-    def self.parse_amount amount
+    def self.parse_amount amount, object
       case amount.class.to_s
       when 'Integer'
       when 'Fixnum'
         value = amount
       when 'Symbol'
         value = object.send(amount)
+      when 'Proc'
+        user = amount.call(object)
       when 'NilClass'
         # Do not complain about nil amounts
       else
-        raise ArgumentError, "type mismatch for amount: expecting 'Integer', 'Fixnum' or 'Symbol', got '#{ amount.class.to_s }'"
+        raise ArgumentError, "type mismatch for amount: expecting 'Integer', 'Fixnum', 'Symbol' or 'Proc' but got '#{ amount.class.to_s }' instead."
       end
       value || 0
     end
