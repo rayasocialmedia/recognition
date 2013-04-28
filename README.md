@@ -30,7 +30,7 @@ app/models/user.rb:
     class User < ActiveRecord::Base
       attr_accessible :name
       has_many :posts
-      acts_as_recognizeable initial: 5
+      acts_as_recognizable initial: 5
     end
 
 app/models/post.rb:

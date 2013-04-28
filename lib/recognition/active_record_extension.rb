@@ -10,7 +10,7 @@ module Recognition
 
     module ClassMethods #:nodoc:
       # to be called from user-model
-      def acts_as_recognizeable options = {}
+      def acts_as_recognizable options = {}
         include RecognizableInstanceMethods
         self.recognizable = true
         self.recognitions ||= {}
