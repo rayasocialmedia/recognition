@@ -21,12 +21,9 @@ module Recognition
       def recognize_actions
         action = params[:action].to_sym
         if self.class.recognitions.keys.include? action
-          update_points current_user.id, action, self.class.recognitions[action][:amount]
+          # update_points current_user.id, action, self.class.recognitions[action][:amount]
+          Database.update_points self, action, self.class.recognitions[action]
         end
-      end
-      
-      def update_points id, action, amount
-        Database.log(id, amount, "C:#{ self.class.to_s.camelize }:#{ action }")
       end
     end
   end

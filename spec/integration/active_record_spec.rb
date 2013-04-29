@@ -17,6 +17,12 @@ describe "User" do
     @user.points.should eq 12
   end
 
+  it "gains points for updating" do
+    @post.title = '[Updated] The quick brown fox jumps over the lazy dog'
+    @post.save
+    @user.points.should eq 13
+  end
+
   it "gains points before hitting maximum" do
     @user.posts.create!(title: 'The quick brown fox jumps over the lazy dog #2')
     @user.points.should eq 19
@@ -24,6 +30,13 @@ describe "User" do
 
   it "stops gaining after hitting maximum" do
     @user.posts.create!(title: 'The quick brown fox jumps over the lazy dog')
+    @user.points.should eq 19
+  end
+
+  it "stops gaining from other actions sharing the same group after hitting maximum" do
+    post = @user.posts.create!(title: 'The quick brown fox jumps over the lazy dog')
+    post.title = '[Updated] The quick brown fox jumps over the lazy dog'
+    post.save
     @user.points.should eq 19
   end
 

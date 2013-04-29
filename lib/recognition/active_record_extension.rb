@@ -25,13 +25,16 @@ module Recognition
         self.recognitions ||= {}
         self.recognitions[condition[:for]] = {
           recognizable: recognizable,
+          bucket: condition[:group],
           gain: condition[:gain],
           loss: condition[:loss],
           maximum: condition[:maximum]
         }
         # Due to the lack of ActiveRecord before_filter,
         # we will have to alias the original method in order to intercept
-        unless [:create, :update, :destroy].include? condition[:for]
+        if [:create, :update, :destroy].include? condition[:for]
+          include ActiveModel::Dirty
+        else
           method = condition[:for]
           define_method "#{method}_with_recognition" do |*args|
             if self.send("#{method}_without_recognition", *args)
@@ -42,7 +45,7 @@ module Recognition
         end
         # For actions that can be intercepted using ActiveRecord callbacks
         after_create :recognize_creating
-        #TODO after_save :recognize_updating 
+        after_save :recognize_updating 
         before_destroy :recognize_destroying
       end
     end
@@ -67,7 +70,9 @@ module Recognition
       end
   
       def recognize_updating
-        Database.update_points self, :update, self.class.recognitions[:update] unless self.class.recognitions[:update].nil?
+        unless self.id_changed? # Unless we are creating
+          Database.update_points self, :update, self.class.recognitions[:update] unless self.class.recognitions[:update].nil?
+        end
       end
   
       def recognize_destroying

@@ -42,7 +42,11 @@ module Recognition
     
     
     def self.update_points object, action, condition
-      bucket = "M:#{ object.class.to_s.camelize }:#{ action }"
+      if condition[:bucket].nil?
+        bucket = "#{ object.class.to_s.camelize }:#{ action }"
+      else
+        bucket = condition[:bucket]
+      end
       user = parse_user(object, condition)
       total = parse_amount(condition[:amount], object) + parse_amount(condition[:gain], object) - parse_amount(condition[:loss], object)
       ground_total = user.recognition_counter(bucket) + total

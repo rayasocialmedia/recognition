@@ -49,6 +49,5 @@ RSpec.configure do |config|
   # Cleanup after every run
   config.before :all do
     DatabaseCleaner.clean
-    $REDIS.flushall
   end
 end
