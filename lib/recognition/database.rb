@@ -4,12 +4,12 @@ module Recognition
   module Database
     def self.log id, amount, bucket
       hash = Time.now.to_f.to_s
-      $REDIS.multi do
-        # $REDIS.incrby "recognition:user:#{ id }:points", amount
-        $REDIS.hincrby "recognition:user:#{ id }:counters", 'points', amount
-        $REDIS.hincrby "recognition:user:#{ id }:counters", bucket, amount
-        $REDIS.zadd "recognition:user:#{ id }:transactions", hash, { hash: hash, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
-        $REDIS.zadd 'recognition:transactions', hash, { hash: hash, id: id, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
+      Recognition.backend.multi do
+        # Recognition.backend.incrby "recognition:user:#{ id }:points", amount
+        Recognition.backend.hincrby "recognition:user:#{ id }:counters", 'points', amount
+        Recognition.backend.hincrby "recognition:user:#{ id }:counters", bucket, amount
+        Recognition.backend.zadd "recognition:user:#{ id }:transactions", hash, { hash: hash, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
+        Recognition.backend.zadd 'recognition:transactions', hash, { hash: hash, id: id, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
       end
     end
     
@@ -18,17 +18,17 @@ module Recognition
         raise ArgumentError, 'parameter should be of type Recognition::Transaction'
       end
       hash = Time.now.to_f.to_s
-      $REDIS.multi do
-        # $REDIS.incrby "recognition:user:#{ id }:points", amount
-        $REDIS.hincrby "recognition:user:#{ id }:counters", 'points', transactions.amount
-        $REDIS.hincrby "recognition:user:#{ id }:counters", transactions.bucket, transactions.amount
-        $REDIS.zadd "recognition:user:#{ id }:transactions", hash, { amount: transactions.amount, bucket: transactions.bucket, datetime: DateTime.now.to_s }.to_json
-        $REDIS.zadd 'recognition:transactions', hash, { id: id, amount: transactions.amount, bucket: transactions.bucket, datetime: DateTime.now.to_s }.to_json
+      Recognition.backend.multi do
+        # Recognition.backend.incrby "recognition:user:#{ id }:points", amount
+        Recognition.backend.hincrby "recognition:user:#{ id }:counters", 'points', transactions.amount
+        Recognition.backend.hincrby "recognition:user:#{ id }:counters", transactions.bucket, transactions.amount
+        Recognition.backend.zadd "recognition:user:#{ id }:transactions", hash, { amount: transactions.amount, bucket: transactions.bucket, datetime: DateTime.now.to_s }.to_json
+        Recognition.backend.zadd 'recognition:transactions', hash, { id: id, amount: transactions.amount, bucket: transactions.bucket, datetime: DateTime.now.to_s }.to_json
       end
     end
     
     def self.get key
-      $REDIS.get key
+      Recognition.backend.get key
     end
     
     def self.get_user_points id
@@ -36,7 +36,7 @@ module Recognition
     end
     
     def self.get_user_counter id, counter
-      counter = $REDIS.hget("recognition:user:#{ id }:counters", counter)
+      counter = Recognition.backend.hget("recognition:user:#{ id }:counters", counter)
       counter.to_i
     end
     
@@ -48,10 +48,14 @@ module Recognition
         bucket = condition[:bucket]
       end
       user = parse_user(object, condition)
-      total = parse_amount(condition[:amount], object) + parse_amount(condition[:gain], object) - parse_amount(condition[:loss], object)
-      ground_total = user.recognition_counter(bucket) + total
-      if condition[:maximum].nil? || ground_total <= condition[:maximum]
-        Database.log(user.id, total, bucket)
+      if condition[:amount].nil? && condition[:gain].nil? && condition[:loss].nil?
+        false
+      else
+        total = parse_amount(condition[:amount], object) + parse_amount(condition[:gain], object) - parse_amount(condition[:loss], object)
+        ground_total = user.recognition_counter(bucket) + total
+        if condition[:maximum].nil? || ground_total <= condition[:maximum]
+          Database.log(user.id, total.to_i, bucket)
+        end
       end
     end
     

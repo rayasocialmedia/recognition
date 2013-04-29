@@ -44,9 +44,11 @@ module Recognition
           alias_method_chain method, 'recognition'
         end
         # For actions that can be intercepted using ActiveRecord callbacks
-        after_create :recognize_creating
-        after_save :recognize_updating 
         before_destroy :recognize_destroying
+        after_save :recognize_updating 
+        # We use after_save for creation to make sure all associations
+        # have been persisted
+        after_save :recognize_creating
       end
     end
 
@@ -66,7 +68,9 @@ module Recognition
     
     module ObjectInstanceMethods #:nodoc:
       def recognize_creating
-        Database.update_points self, :create, self.class.recognitions[:create] unless self.class.recognitions[:create].nil?
+        if self.id_changed? # Unless we are creating
+          Database.update_points self, :create, self.class.recognitions[:create] unless self.class.recognitions[:create].nil?
+        end
       end
   
       def recognize_updating

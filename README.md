@@ -12,9 +12,9 @@ And then execute:
 
     $ bundle
 
-Or install it yourself as:
+Then, you need to run the generator:
 
-    $ gem install recognition
+    $ rails generate recogintion:install
 
 ## Usage
 
@@ -54,11 +54,42 @@ app/controllers/profiles_controller.rb:
       end
     end
 
+Note:
+=====
+Due to the way Ruby method aliasing work, if you need to recognize users for 
+non-ActiveRecord actions (anything that's not :create, :update and :destroy),
+make sure you add the `recognize` line *after* the method you want to 
+recognize the user for.
+
+Example:
+-------
+The following won't work:
+
+    class Post < ActiveRecord::Base
+      attr_accessible :title, :user_id
+      recognize :user, for: :foo, gain: 2
+      def foo
+        # do something useful
+      end
+    end
+
+This one will:
+
+    class Post < ActiveRecord::Base
+      attr_accessible :title, :user_id
+      def foo
+        # do something useful
+      end
+      recognize :user, for: :foo, gain: 2
+    end
+
+  
+
 ## Contributing
 
 Please see CONTRIBUTING.md for details.
 
-##Credits
+## Credits
 recognition was originally written by Omar Abdel-Wahab.
 
 ![RSM](http://rayasocialmedia.com/images/logo.png)

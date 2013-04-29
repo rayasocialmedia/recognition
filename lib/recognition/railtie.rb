@@ -1,7 +1,6 @@
 require "recognition/active_record_extension"
 require "recognition/action_controller_extension"
 require "rails"
-require "redis"
 
 module Recognition
   class Railtie < Rails::Railtie
@@ -13,10 +12,10 @@ module Recognition
         ActionController::Base.send(:include, ActionControllerExtension)
       end
     end
-    
-    initializer 'recognition.database' do
-      #TODO: use a Rails initializer
-      $REDIS = Redis.new #(host: 'localhost', port: redis_config[:port])
-    end
+    # 
+    # initializer 'recognition.database' do
+    #   #TODO: use a Rails initializer
+    #   $REDIS = Redis.new #(host: 'localhost', port: redis_config[:port])
+    # end
   end
 end
