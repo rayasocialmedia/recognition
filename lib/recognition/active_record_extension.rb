@@ -64,6 +64,10 @@ module Recognition
       def add_initial_points
         Database.update_points self, :initial, self.class.recognitions[:initial]
       end
+
+      def update_points amount, bucket
+        Database.log(self.id, amount.to_i, bucket)
+      end
     end
     
     module ObjectInstanceMethods #:nodoc:
