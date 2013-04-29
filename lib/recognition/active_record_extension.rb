@@ -29,7 +29,19 @@ module Recognition
           loss: condition[:loss],
           maximum: condition[:maximum]
         }
-        after_save :recognize_creating
+        # Due to the lack of ActiveRecord before_filter,
+        # we will have to alias the original method in order to intercept
+        unless [:create, :update, :destroy].include? condition[:for]
+          method = condition[:for]
+          define_method "#{method}_with_recognition" do |*args|
+            if self.send("#{method}_without_recognition", *args)
+              Database.update_points self, condition[:for], self.class.recognitions[condition[:for]]
+            end
+          end
+          alias_method_chain method, 'recognition'
+        end
+        # For actions that can be intercepted using ActiveRecord callbacks
+        after_create :recognize_creating
         #TODO after_save :recognize_updating 
         before_destroy :recognize_destroying
       end
@@ -45,21 +57,21 @@ module Recognition
       end
   
       def add_initial_points
-        Database.add_points self, :initial, self.class.recognitions[:initial]
+        Database.update_points self, :initial, self.class.recognitions[:initial]
       end
     end
     
     module ObjectInstanceMethods #:nodoc:
       def recognize_creating
-        Database.add_points self, :create, self.class.recognitions[:create] unless self.class.recognitions[:create].nil?
+        Database.update_points self, :create, self.class.recognitions[:create] unless self.class.recognitions[:create].nil?
       end
   
       def recognize_updating
-        Database.add_points self, :update, self.class.recognitions[:update] unless self.class.recognitions[:update].nil?
+        Database.update_points self, :update, self.class.recognitions[:update] unless self.class.recognitions[:update].nil?
       end
   
       def recognize_destroying
-        Database.add_points self, :destroy, self.class.recognitions[:destroy] unless self.class.recognitions[:destroy].nil?
+        Database.update_points self, :destroy, self.class.recognitions[:destroy] unless self.class.recognitions[:destroy].nil?
       end
   
     end

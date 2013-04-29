@@ -8,8 +8,8 @@ module Recognition
         # $REDIS.incrby "recognition:user:#{ id }:points", amount
         $REDIS.hincrby "recognition:user:#{ id }:counters", 'points', amount
         $REDIS.hincrby "recognition:user:#{ id }:counters", bucket, amount
-        $REDIS.zadd "recognition:user:#{ id }:transactions", hash, { amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
-        $REDIS.zadd 'recognition:transactions', hash, { id: id, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
+        $REDIS.zadd "recognition:user:#{ id }:transactions", hash, { hash: hash, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
+        $REDIS.zadd 'recognition:transactions', hash, { hash: hash, id: id, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
       end
     end
     
@@ -41,7 +41,7 @@ module Recognition
     end
     
     
-    def self.add_points object, action, condition
+    def self.update_points object, action, condition
       bucket = "M:#{ object.class.to_s.camelize }:#{ action }"
       user = parse_user(object, condition)
       total = parse_amount(condition[:amount], object) + parse_amount(condition[:gain], object) - parse_amount(condition[:loss], object)
@@ -77,7 +77,7 @@ module Recognition
       when 'Symbol'
         value = object.send(amount)
       when 'Proc'
-        user = amount.call(object)
+        value = amount.call(object)
       when 'NilClass'
         # Do not complain about nil amounts
       else

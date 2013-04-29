@@ -33,12 +33,25 @@ describe "User" do
   end
 end
 
-describe "User" do
-  # it "buys a product loses points equal to product points equivilant" do
-  # @user = User.create!(name: "John Doe")
-  #   @product = Product.create!(points: 3)
-  #   @product.buy
-  #   @user.points.should eq 2
-  # end
+describe "Product" do
+  before :each do
+    @user ||= User.create!(name: "John Doe")
+    @another_user ||= User.create!(name: "Jane Smith")
+    @product = Product.create!(owner: @user, points: 2)
+  end
+
+  it "owner gains points equal to product points for creation" do
+    @user.points.should eq 7
+  end
+
+  it "buyer loses points equal to double product points" do
+    @product.buy @another_user
+    @another_user.points.should eq 1
+  end
+  
+  it "buyer loses no points if product buying is cancelled" do
+    @product.false_buying @another_user
+    @another_user.points.should eq 5
+  end
 end
 
