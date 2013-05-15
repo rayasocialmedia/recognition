@@ -29,8 +29,3 @@ RSpec::Core::RakeTask.new(:spec)
 task :default => :spec
 
 Bundler::GemHelper.install_tasks
-
-YARD::Rake::YardocTask.new do |t|
-  t.files   = ['lib/**/*.rb', 'CHANGELOG.txt', 'LICENSE.txt', 'CONTRIBUTING.txt']
-  t.options = ['--any', '--extra', '--opts']
-end
