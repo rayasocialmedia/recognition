@@ -1,0 +1,27 @@
+<h1>Listing vouchers</h1>
+
+<table>
+  <tr>
+    <th>Code</th>
+    <th>Amount</th>
+    <th>Expires at</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @vouchers.each do |voucher| %>
+  <tr>
+    <td><%= voucher.code %></td>
+    <td><%= voucher.amount %></td>
+    <td><%= voucher.expires_at %></td>
+    <td><%= link_to 'Show', voucher %></td>
+    <td><%= link_to 'Edit', edit_voucher_path(voucher) %></td>
+    <td><%= link_to 'Destroy', voucher, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Voucher', new_voucher_path %>

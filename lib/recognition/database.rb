@@ -1,29 +1,18 @@
 require "recognition/transaction"
 
 module Recognition
+  # Handle all Transactions and logging to Redis
   module Database
-    def self.log id, amount, bucket
+    def self.log id, amount, bucket, code = nil
       hash = Time.now.to_f.to_s
       Recognition.backend.multi do
-        # Recognition.backend.incrby "recognition:user:#{ id }:points", amount
         Recognition.backend.hincrby "recognition:user:#{ id }:counters", 'points', amount
         Recognition.backend.hincrby "recognition:user:#{ id }:counters", bucket, amount
         Recognition.backend.zadd "recognition:user:#{ id }:transactions", hash, { hash: hash, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
         Recognition.backend.zadd 'recognition:transactions', hash, { hash: hash, id: id, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
-      end
-    end
-    
-    def self.record transaction
-      unless transaction.class.to_s == Recognition::Transaction
-        raise ArgumentError, 'parameter should be of type Recognition::Transaction'
-      end
-      hash = Time.now.to_f.to_s
-      Recognition.backend.multi do
-        # Recognition.backend.incrby "recognition:user:#{ id }:points", amount
-        Recognition.backend.hincrby "recognition:user:#{ id }:counters", 'points', transactions.amount
-        Recognition.backend.hincrby "recognition:user:#{ id }:counters", transactions.bucket, transactions.amount
-        Recognition.backend.zadd "recognition:user:#{ id }:transactions", hash, { amount: transactions.amount, bucket: transactions.bucket, datetime: DateTime.now.to_s }.to_json
-        Recognition.backend.zadd 'recognition:transactions', hash, { id: id, amount: transactions.amount, bucket: transactions.bucket, datetime: DateTime.now.to_s }.to_json
+        unless code.nil?
+          Recognition.backend.zadd "recognition:voucher:#{ code }:transactions", hash, { hash: hash, id: id, bucket: bucket, datetime: DateTime.now.to_s }.to_json
+        end
       end
     end
     
@@ -40,6 +29,19 @@ module Recognition
       counter.to_i
     end
     
+    def self.get_user_transactions id, page = 0, per = 20
+      start = page * per 
+      stop = (1 + page) * per 
+      keypart = "user:#{ id }"
+      self.get_transactions keypart, start, stop
+    end
+    
+    def self.get_voucher_transactions code, page = 0, per = 20
+      start = page * per
+      stop = (1 + page) * per 
+      keypart = "voucher:#{ code }"
+      self.get_transactions keypart, start, stop
+    end
     
     def self.update_points object, action, condition
       if condition[:bucket].nil?
@@ -57,6 +59,27 @@ module Recognition
           Database.log(user.id, total.to_i, bucket)
         end
       end
+    end
+    
+    def self.redeem_voucher id, code, amount
+      bucket = "Voucher:redeem##{ code }"
+      Database.log(id, amount.to_i, bucket, code)
+    end
+    
+    def self.get_user_voucher id, code
+      bucket = "Voucher:redeem##{ code }"
+      Database.get_user_counter id, bucket
+    end
+    
+    private
+    
+    def self.get_transactions keypart, start, stop
+      transactions = []
+      range = Recognition.backend.zrange "recognition:#{ keypart }:transactions", start, stop
+      range.each do |transaction|
+        transactions << JSON.parse(transaction, { symbolize_names: true })
+      end
+      transactions
     end
     
     def self.parse_user object, condition

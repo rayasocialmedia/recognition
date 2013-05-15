@@ -54,15 +54,14 @@ app/controllers/profiles_controller.rb:
       end
     end
 
-Note:
-=====
+
+### Note
 Due to the way Ruby method aliasing work, if you need to recognize users for 
 non-ActiveRecord actions (anything that's not :create, :update and :destroy),
 make sure you add the `recognize` line *after* the method you want to 
 recognize the user for.
 
-Example:
--------
+## Example
 The following won't work:
 
     class Post < ActiveRecord::Base

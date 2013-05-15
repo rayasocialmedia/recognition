@@ -1,6 +1,7 @@
 require "recognition/database"
 
 module Recognition
+  # Extending ActiveRecord
   module ActionControllerExtension
     def self.included(base)
       base.extend ClassMethods

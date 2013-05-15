@@ -1,3 +1,9 @@
+Version 0.3.0:
+-------------
+* Adding .transactions to `acts_as_recognizable` models.
+* Adding vouchers.
+* Adding rdoc documentation.
+
 Version 0.2.0:
 -------------
 Exposing an update_points method to models with acts_as_recognizable.
