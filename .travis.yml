@@ -1,0 +1,5 @@
+language: ruby
+before_script: "RAILS_ENV=test rake -f spec/dummy/Rakefile db:create db:migrate"
+rvm:
+  - 1.9.3
+  - 2.0.0
