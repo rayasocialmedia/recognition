@@ -26,19 +26,26 @@ module Recognition
       def redeemable? recognizable
         # default: not redeemable
         pass = false
-        # has the voucher ever been redeemed?
-        if Database.get_voucher_transactions(self.code).any?
-          # has the voucher ever been redeemed by this user?
-          if Database.get_user_voucher(recognizable.id, code) != 0
-            pass = false
-            # is the voucher reusable?
-          elsif defined?(self.reusable?) && self.reusable?
+        # only check if the voucher did not expire
+        unless expired?
+          # has the voucher ever been redeemed?
+          if Database.get_voucher_transactions(self.code).any?
+            # has the voucher ever been redeemed by this user?
+            if Database.get_user_voucher(recognizable.id, code) != 0
+              pass = false
+              # is the voucher reusable?
+            elsif defined?(self.reusable?) && self.reusable?
+              pass = true
+            end
+          else
             pass = true
           end
-        else
-          pass = true
         end
         pass
+      end
+      
+      def expired?
+        defined?(self.expires_at) && self.expires_at.present? && self.expires_at < DateTime.now
       end
     end
   end

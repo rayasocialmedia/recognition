@@ -16,7 +16,11 @@ Then, you need to run the generator:
 
     $ rails generate recogintion:install
 
+And finally, configure your REDIS server connection parameters in: `config/recognition.yml`
+
 ## Usage
+
+### Points
 
 Assuming you have two models User and Post and you want to give users points for the following:
 
@@ -54,8 +58,28 @@ app/controllers/profiles_controller.rb:
       end
     end
 
+### Vouchers
 
-### Note
+Use an existing model or generate a new one. Your model might have the following attributes:
+
+*  `:code` **required**
+*  `:amount` **required**
+*  `:expires_at` _optional_
+*  `:reusable` _optional_
+
+app/models/voucher.rb:
+
+    class Voucher < ActiveRecord::Base
+      attr_accessible :code, :amount, :expires_at, :reusable
+      acts_as_voucher code_length: 14
+    end
+
+Then, you may do:
+
+    voucher = Voucher.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
+    voucher.redeem current_user
+
+**Note:**
 Due to the way Ruby method aliasing work, if you need to recognize users for 
 non-ActiveRecord actions (anything that's not :create, :update and :destroy),
 make sure you add the `recognize` line *after* the method you want to 

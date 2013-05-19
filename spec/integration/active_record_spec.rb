@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Registration:" do
+describe "Registration" do
   it "user gains initial points after registration" do
     user = User.create!(name: "John Doe")
     user.points.should eq 5
@@ -90,7 +90,7 @@ describe "Voucher" do
     @user.points.should eq 45
   end
 
-  it "can be redeemed only once if they are disposable" do
+  it "can be redeemed only once if it is disposable" do
     @another_user ||= User.create!(name: "Jane Smith")
     @voucher.redeem @user
     @voucher.redeem @another_user
@@ -103,6 +103,18 @@ describe "Voucher" do
     @reusable_voucher.redeem @user
     @reusable_voucher.redeem @another_user
     @another_user.points.should eq 25
+  end
+
+  it "can not be redeemed if it expired" do
+    @another_voucher = Voucher.create!(amount: 10, expires_at: DateTime.now)
+    @another_voucher.redeem @user
+    @user.points.should eq 5
+  end
+
+  it "can be redeemed if it expires in the future" do
+    @another_voucher = Voucher.create!(amount: 13, expires_at: (DateTime.now + 1.day))
+    @another_voucher.redeem @user
+    @user.points.should eq 18
   end
 end
 

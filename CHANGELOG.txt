@@ -1,3 +1,9 @@
+Version 0.3.4:
+-------------
+* Adding expiration date to vouchers.
+* Adding documentation for vouchers.
+* Updateing installation documentation.
+
 Version 0.3.3:
 -------------
 * Fixing Travis builds.
