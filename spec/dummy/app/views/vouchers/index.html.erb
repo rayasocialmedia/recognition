@@ -4,6 +4,7 @@
   <tr>
     <th>Code</th>
     <th>Amount</th>
+    <th>Reusable</th>
     <th>Expires at</th>
     <th></th>
     <th></th>
@@ -14,6 +15,7 @@
   <tr>
     <td><%= voucher.code %></td>
     <td><%= voucher.amount %></td>
+    <td><%= voucher.reusable %></td>
     <td><%= voucher.expires_at %></td>
     <td><%= link_to 'Show', voucher %></td>
     <td><%= link_to 'Edit', edit_voucher_path(voucher) %></td>

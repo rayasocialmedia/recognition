@@ -1,3 +1,7 @@
+Version 0.3.6:
+-------------
+* Added voucher generator.
+
 Version 0.3.5:
 -------------
 * Documentation.

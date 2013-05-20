@@ -42,11 +42,11 @@ ActiveRecord::Schema.define(:version => 20130515142946) do
 
   create_table "vouchers", :force => true do |t|
     t.string   "code"
-    t.string   "amount"
-    t.boolean  "reusable"
+    t.integer  "amount"
+    t.boolean  "reusable",   :default => false
     t.datetime "expires_at"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
   end
 
 end
