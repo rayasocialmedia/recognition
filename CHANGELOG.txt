@@ -1,3 +1,7 @@
+Version 0.3.5:
+-------------
+* Documentation.
+
 Version 0.3.4:
 -------------
 * Adding expiration date to vouchers.

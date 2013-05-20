@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
   s.version     = Recognition::VERSION
   s.authors     = ["Omar Abdel-Wahab"]
   s.email       = ["owahab@gmail.com"]
-  s.homepage    = "http://github.com/owahab/recognition"
+  s.homepage    = "http://github.com/rayasocialmedia/recognition"
   s.summary     = "Recognize users by giving them points and rewards for their actions"
   s.description = "Recognize users by giving them points and rewards for their actions"
   

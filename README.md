@@ -2,6 +2,21 @@
 
 A fully-fledged reward system for Rails 3.1+.
 
+## Features
+
+*  Reward users with points for any model method or ActiveRecord CRUD operation.
+*  Create vouchers that users can redeem for points.
+
+## Links
+
+*  [Installation](#Installation)
+*  [Usage](#Usage)
+*  [Examples](#Examples)
+*  [Wiki](https://github.com/rayasocialmedia/recognition/wiki)
+*  [Code Documentation](http://rubydoc.info/gems/recognition/frames)
+*  [Changelog](https://raw.github.com/rayasocialmedia/recognition/master/CHANGELOG.txt)
+*  [License](https://raw.github.com/rayasocialmedia/recognition/master/LICENSE.txt)
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -106,7 +121,6 @@ This one will:
       recognize :user, for: :foo, gain: 2
     end
 
-  
 
 ## Contributing
 
