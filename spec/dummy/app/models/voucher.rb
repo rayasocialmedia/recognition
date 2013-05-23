@@ -1,5 +1,5 @@
 class Voucher < ActiveRecord::Base
-  acts_as_voucher code_length: 14 
+  acts_as_voucher code_length: 14, suffix: 'XYZ', prefix: -> voucher { voucher.amount }
   
   attr_accessible :amount, :code, :expires_at, :reusable
   

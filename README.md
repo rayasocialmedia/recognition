@@ -61,6 +61,12 @@ app/models/post.rb:
       recognize :user, for: :destroy, loss: 2, maximum: 4
     end
 
+**Important:**
+Due to the way Ruby method aliasing work, if you need to recognize users for 
+non-ActiveRecord actions (anything that's not :create, :update and :destroy),
+make sure you add the `recognize` line *after* the method you want to 
+recognize the user for.
+
 app/controllers/profiles_controller.rb:
 
     class ProfilesController < ApplicationController
@@ -86,6 +92,11 @@ Your model might have the following attributes:
 *  `:expires_at` _optional_
 *  `:reusable` _optional_
 
+You can specify the following extra parameters for vouchers:
+
+* `:prefix` can be a number, string or method name or even an anonymous function.
+* `:suffix` can be a number, string or method name or even an anonymous function.
+
 app/models/voucher.rb:
 
     class Voucher < ActiveRecord::Base
@@ -97,12 +108,6 @@ Then, you may do:
 
     voucher = Voucher.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
     voucher.redeem current_user
-
-**Note:**
-Due to the way Ruby method aliasing work, if you need to recognize users for 
-non-ActiveRecord actions (anything that's not :create, :update and :destroy),
-make sure you add the `recognize` line *after* the method you want to 
-recognize the user for.
 
 ## Example
 The following won't work:

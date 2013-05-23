@@ -71,6 +71,26 @@ module Recognition
       Database.get_user_counter id, bucket
     end
     
+    def self.parse_voucher_part part, object
+      case part.class.to_s
+      when 'String'
+        value = part
+      when 'Integer'
+        value = part.to_s
+      when 'Fixnum'
+        value = part.to_s
+      when 'Symbol'
+        value = object.send(part).to_s
+      when 'Proc'
+        value = part.call(object).to_s
+      when 'NilClass'
+        # Do not complain about nil amounts
+      else
+        raise ArgumentError, "type mismatch for voucher part: expecting 'Integer', 'Fixnum', 'Symbol' or 'Proc' but got '#{ amount.class.to_s }' instead."
+      end
+      value || ''
+    end
+    
     private
     
     def self.get_transactions keypart, start, stop
@@ -103,6 +123,7 @@ module Recognition
     def self.parse_amount amount, object
       case amount.class.to_s
       when 'Integer'
+        value = amount
       when 'Fixnum'
         value = amount
       when 'Symbol'

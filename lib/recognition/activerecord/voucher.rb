@@ -1,12 +1,12 @@
 module Recognition
   module ActiveRecord
     module Voucher
-      # class_attribute :voucher_validators
-      
       def regenerate_code
-        l = self.class.recognitions[:code_length] || 10
+        prefix = Recognition::Database.parse_voucher_part(self.class.recognitions[:prefix], self)
+        suffix = Recognition::Database.parse_voucher_part(self.class.recognitions[:suffix], self)
+        l = (self.class.recognitions[:code_length] - (prefix.length + suffix.length)) || 10
         dict = [('a'..'z'),('A'..'Z'),(0..9)].map{|i| i.to_a}.flatten
-        code = (1..l).map{ dict[rand(dict.length)] }.join
+        code = (1..l).map{ dict[rand(dict.length)] }.prepend(prefix).append(suffix).join
         # Prevent code collision at all costs
         if self.class.to_s.constantize.find_all_by_code(code).any?
           regenerate_code
