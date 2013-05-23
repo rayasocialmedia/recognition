@@ -1,4 +1,5 @@
 # Recognition
+[![Build Status](https://travis-ci.org/rayasocialmedia/recognition.png?branch=master)](https://travis-ci.org/rayasocialmedia/recognition)
 
 A fully-fledged reward system for Rails 3.1+.
 
