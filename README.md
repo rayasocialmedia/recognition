@@ -11,8 +11,8 @@ A fully-fledged reward system for Rails 3.1+.
 ## Links
 
 *  [Installation](#Installation)
-*  [Usage](#Usage)
-*  [Examples](#Examples)
+*  [Usage](#usage)
+*  [Examples](#example)
 *  [Wiki](https://github.com/rayasocialmedia/recognition/wiki)
 *  [Code Documentation](http://rubydoc.info/gems/recognition/frames)
 *  [Changelog](https://raw.github.com/rayasocialmedia/recognition/master/CHANGELOG.txt)
