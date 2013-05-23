@@ -1,6 +1,8 @@
 module Recognition
   module ActiveRecord
     module Voucher
+      # class_attribute :voucher_validators
+      
       def regenerate_code
         l = self.class.recognitions[:code_length] || 10
         dict = [('a'..'z'),('A'..'Z'),(0..9)].map{|i| i.to_a}.flatten
@@ -18,6 +20,14 @@ module Recognition
         # Make sure we have an amount beforehand
         if defined? self.amount
           if self.redeemable? recognizable
+            # Call custom validators
+            if defined? self.class.voucher_validators
+              self.class.voucher_validators.each do |validator|
+                # quit if any validator returned false
+                return if send(validator) == false
+              end
+            end
+            # If all went well:
             Database.redeem_voucher recognizable.id, self.code, self.amount
           end
         end

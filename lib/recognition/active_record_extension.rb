@@ -59,6 +59,12 @@ module Recognition
         require "recognition/activerecord/voucher"
         include Recognition::ActiveRecord::Voucher
         self.recognitions = options
+        cattr_accessor :voucher_validators
+        def self.validates_voucher_redmeption validators
+          self.voucher_validators ||= []
+          self.voucher_validators << validators
+          self.voucher_validators.flatten!
+        end
         before_create :regenerate_code
       end
     end

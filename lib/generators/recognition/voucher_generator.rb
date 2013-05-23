@@ -8,7 +8,7 @@ module Recognition
       def set_defaults
         line = "t.boolean :reusable"
         gsub_file Dir.glob("db/migrate/*_create_vouchers.rb").first, /(#{Regexp.escape(line)})/mi do |match|
-          "#{match}, default: fals"
+          "#{match}, default: false"
         end
       end
       

@@ -75,7 +75,11 @@ app/controllers/profiles_controller.rb:
 
 ### Vouchers
 
-Use an existing model or generate a new one. Your model might have the following attributes:
+Use an existing model or generate a new one using:
+
+    $ rails generate recogintion:voucher
+
+Your model might have the following attributes:
 
 *  `:code` **required**
 *  `:amount` **required**
@@ -86,7 +90,7 @@ app/models/voucher.rb:
 
     class Voucher < ActiveRecord::Base
       attr_accessible :code, :amount, :expires_at, :reusable
-      acts_as_voucher code_length: 14
+        acts_as_voucher code_length: 14
     end
 
 Then, you may do:

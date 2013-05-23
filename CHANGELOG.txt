@@ -1,3 +1,7 @@
+Version 0.3.7:
+-------------
+* Added voucher validators.
+
 Version 0.3.6:
 -------------
 * Added voucher generator.

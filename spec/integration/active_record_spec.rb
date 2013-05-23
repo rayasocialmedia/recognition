@@ -116,5 +116,12 @@ describe "Voucher" do
     @another_voucher.redeem @user
     @user.points.should eq 18
   end
+
+  it "can not be redeemed if custom validators returned false" do
+    @another_voucher = Voucher.create!(amount: 1000)
+    @another_voucher.redeem @user
+    @user.points.should eq 5
+  end
+
 end
 
