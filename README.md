@@ -5,7 +5,7 @@ A fully-fledged reward system for Rails 3.1+.
 
 ## Features
 
-*  Reward users with points for any model method or ActiveRecord CRUD operation.
+*  Reward users with points for any model method, ActiveRecord crud or even controller methods.
 *  Create vouchers that users can redeem for points.
 
 ## Links
