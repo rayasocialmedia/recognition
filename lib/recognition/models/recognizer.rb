@@ -1,6 +1,6 @@
 module Recognition
-  module ActiveRecord
-    module Model
+  module Models
+    module Recognizer
       def recognize_creating
         if self.id_changed? # Unless we are creating
           Database.update_points self, :create, self.class.recognitions[:create] unless self.class.recognitions[:create].nil?

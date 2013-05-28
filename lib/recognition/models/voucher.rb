@@ -1,9 +1,9 @@
 module Recognition
-  module ActiveRecord
+  module Models
     module Voucher
       def regenerate_code
-        prefix = Recognition::Database.parse_voucher_part(self.class.recognitions[:prefix], self)
-        suffix = Recognition::Database.parse_voucher_part(self.class.recognitions[:suffix], self)
+        prefix = Recognition::Parser.parse_code_part(self.class.recognitions[:prefix], self)
+        suffix = Recognition::Parser.parse_code_part(self.class.recognitions[:suffix], self)
         l = (self.class.recognitions[:code_length] - (prefix.length + suffix.length)) || 10
         dict = [('a'..'z'),('A'..'Z'),(0..9)].map{|i| i.to_a}.flatten
         code = (1..l).map{ dict[rand(dict.length)] }.prepend(prefix).append(suffix).join
@@ -57,6 +57,26 @@ module Recognition
       def expired?
         defined?(self.expires_at) && self.expires_at.present? && self.expires_at < DateTime.now
       end
+      
+      private
+      
+      def self.get_user_voucher id, code
+        bucket = "Voucher:redeem##{ code }"
+        Recognition::Database.get_counter "user:#{id}", bucket
+      end
+      
+      def redeem_voucher id, code, amount
+        bucket = "Voucher:redeem##{ code }"
+        Database.log(id, amount.to_i, bucket, code)
+      end
+    
+      def transactions page = 0, per = 20
+        start = page * per
+        stop = (1 + page) * per 
+        keypart = "voucher:#{ self.code }"
+        Recognition::Database.get_transactions keypart, start, stop
+      end
+    
     end
   end
 end

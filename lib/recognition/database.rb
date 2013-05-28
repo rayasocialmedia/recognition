@@ -1,4 +1,4 @@
-require "recognition/transaction"
+require 'recognition/parser'
 
 module Recognition
   # Handle all Transactions and logging to Redis
@@ -17,30 +17,11 @@ module Recognition
     end
     
     def self.get key
-      Recognition.backend.get key
+      Recognition.backend.get "recognition:#{key}"
     end
     
-    def self.get_user_points id
-      get_user_counter id, 'points'
-    end
-    
-    def self.get_user_counter id, counter
-      counter = Recognition.backend.hget("recognition:user:#{ id }:counters", counter)
-      counter.to_i
-    end
-    
-    def self.get_user_transactions id, page = 0, per = 20
-      start = page * per 
-      stop = (1 + page) * per 
-      keypart = "user:#{ id }"
-      self.get_transactions keypart, start, stop
-    end
-    
-    def self.get_voucher_transactions code, page = 0, per = 20
-      start = page * per
-      stop = (1 + page) * per 
-      keypart = "voucher:#{ code }"
-      self.get_transactions keypart, start, stop
+    def self.get_counter hash, key
+      Recognition.backend.hget("recognition:#{hash}", key).to_i
     end
     
     def self.update_points object, action, condition
@@ -49,46 +30,16 @@ module Recognition
       else
         bucket = condition[:bucket]
       end
-      user = parse_user(object, condition)
+      user = Recognition::Parser.parse_recognizable(object, condition[:recognizable])
       if condition[:amount].nil? && condition[:gain].nil? && condition[:loss].nil?
         false
       else
-        total = parse_amount(condition[:amount], object) + parse_amount(condition[:gain], object) - parse_amount(condition[:loss], object)
+        total = Recognition::Parser.parse_amount(condition[:amount], object) + Recognition::Parser.parse_amount(condition[:gain], object) - Recognition::Parser.parse_amount(condition[:loss], object)
         ground_total = user.recognition_counter(bucket) + total
         if condition[:maximum].nil? || ground_total <= condition[:maximum]
           Database.log(user.id, total.to_i, bucket)
         end
       end
-    end
-    
-    def self.redeem_voucher id, code, amount
-      bucket = "Voucher:redeem##{ code }"
-      Database.log(id, amount.to_i, bucket, code)
-    end
-    
-    def self.get_user_voucher id, code
-      bucket = "Voucher:redeem##{ code }"
-      Database.get_user_counter id, bucket
-    end
-    
-    def self.parse_voucher_part part, object
-      case part.class.to_s
-      when 'String'
-        value = part
-      when 'Integer'
-        value = part.to_s
-      when 'Fixnum'
-        value = part.to_s
-      when 'Symbol'
-        value = object.send(part).to_s
-      when 'Proc'
-        value = part.call(object).to_s
-      when 'NilClass'
-        # Do not complain about nil amounts
-      else
-        raise ArgumentError, "type mismatch for voucher part: expecting 'Integer', 'Fixnum', 'Symbol' or 'Proc' but got '#{ amount.class.to_s }' instead."
-      end
-      value || ''
     end
     
     private
@@ -100,42 +51,6 @@ module Recognition
         transactions << JSON.parse(transaction, { symbolize_names: true })
       end
       transactions
-    end
-    
-    def self.parse_user object, condition
-      if condition[:recognizable].nil?
-        user = object
-      else
-        case condition[:recognizable].class.to_s
-        when 'Symbol'
-          user = object.send(condition[:recognizable])
-        when 'String'
-          user = object.send(condition[:recognizable].to_sym)
-        when 'Proc'
-          user = object.call(condition[:proc_params])
-        else
-          user = condition[:recognizable]
-        end
-      end
-      user
-    end
-    
-    def self.parse_amount amount, object
-      case amount.class.to_s
-      when 'Integer'
-        value = amount
-      when 'Fixnum'
-        value = amount
-      when 'Symbol'
-        value = object.send(amount)
-      when 'Proc'
-        value = amount.call(object)
-      when 'NilClass'
-        # Do not complain about nil amounts
-      else
-        raise ArgumentError, "type mismatch for amount: expecting 'Integer', 'Fixnum', 'Symbol' or 'Proc' but got '#{ amount.class.to_s }' instead."
-      end
-      value || 0
     end
   end
 end

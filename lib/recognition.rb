@@ -1,6 +1,6 @@
-require "recognition/engine"
 require "recognition/version"
-require "recognition/railtie"
+require "recognition/rails/engine"
+require "recognition/rails/railtie"
 require "redis"
 
 module Recognition

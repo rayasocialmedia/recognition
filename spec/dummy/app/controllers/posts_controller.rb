@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   recognize :current_user, for: :index, amount: 6, maximum: 12
+  recognize :current_user, for: :show, amount: -> p { 1 if p[:foo] == 'bar' }
   
   # GET /posts
   # GET /posts.json
