@@ -24,11 +24,14 @@ module Recognition
             if defined? self.class.voucher_validators
               self.class.voucher_validators.each do |validator|
                 # quit if any validator returned false
-                return if send(validator) == false
+                if send(validator) == false
+                  Recognition.log :voucher, "validation error for voucher:#{self.id}"
+                  return
+                end
               end
             end
             # If all went well:
-            Database.redeem_voucher recognizable.id, self.code, self.amount
+            Recognition::Database.redeem recognizable.id, bucket, 'voucher', self.code, amount.to_i
           end
         end
       end
@@ -39,9 +42,9 @@ module Recognition
         # only check if the voucher did not expire
         unless expired?
           # has the voucher ever been redeemed?
-          if Database.get_voucher_transactions(self.code).any?
+          if transactions.any?
             # has the voucher ever been redeemed by this user?
-            if Database.get_user_voucher(recognizable.id, code) != 0
+            if get_user_voucher(recognizable.id) != 0
               pass = false
               # is the voucher reusable?
             elsif defined?(self.reusable?) && self.reusable?
@@ -60,21 +63,18 @@ module Recognition
       
       private
       
-      def self.get_user_voucher id, code
-        bucket = "Voucher:redeem##{ code }"
+      def bucket
+        "voucher:#{ self.code }"
+      end
+      
+      def get_user_voucher id
         Recognition::Database.get_counter "user:#{id}", bucket
       end
       
-      def redeem_voucher id, code, amount
-        bucket = "Voucher:redeem##{ code }"
-        Database.log(id, amount.to_i, bucket, code)
-      end
-    
       def transactions page = 0, per = 20
         start = page * per
         stop = (1 + page) * per 
-        keypart = "voucher:#{ self.code }"
-        Recognition::Database.get_transactions keypart, start, stop
+        Recognition::Database.get_transactions bucket, start, stop
       end
     
     end

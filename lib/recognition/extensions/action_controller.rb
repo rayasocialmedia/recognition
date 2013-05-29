@@ -12,7 +12,7 @@ module Recognition
           require "recognition/controllers/recognizer"
           include Recognition::Controllers::Recognizer
           self.recognitions ||= {}
-          self.recognitions[condition[:for]] = { recognizable: recognizable, amount: condition[:amount], maximum: condition[:maximum] || 0 }
+          self.recognitions[condition[:for]] = { recognizable: recognizable, amount: condition[:amount], gain: condition[:gain], loss: condition[:loss], maximum: condition[:maximum] }
           after_filter :recognize_actions
         end
       end

@@ -1,6 +1,6 @@
 module Recognition
   module Parser
-    def self.parse_recognizable object, recognizable
+    def self.parse_recognizable object, recognizable, proc_params = nil
       if recognizable.nil?
         user = object
       else
@@ -10,7 +10,8 @@ module Recognition
         when 'String'
           user = object.send(recognizable.to_sym)
         when 'Proc'
-          user = recognizable.call(object)
+          params = proc_params || object
+          user = recognizable.call(params)
         else
           user = recognizable
         end
@@ -18,7 +19,7 @@ module Recognition
       user
     end
     
-    def self.parse_amount amount, object
+    def self.parse_amount amount, object, proc_params = nil
       case amount.class.to_s
       when 'Integer'
         value = amount
@@ -27,7 +28,8 @@ module Recognition
       when 'Symbol'
         value = object.send(amount)
       when 'Proc'
-        value = amount.call(object)
+        params = proc_params || object
+        value = amount.call(params)
       when 'NilClass'
         # Do not complain about nil amounts
       else

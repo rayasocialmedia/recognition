@@ -40,7 +40,7 @@ module Recognition
             method = condition[:for]
             define_method "#{method}_with_recognition" do |*args|
               if self.send("#{method}_without_recognition", *args)
-                Recognition::Backends::Models.update_points self, condition[:for], self.class.recognitions[condition[:for]]
+                Recognition::Database.update_points self, condition[:for], self.class.recognitions[condition[:for]]
               end
             end
             alias_method_chain method, 'recognition'

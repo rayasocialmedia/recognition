@@ -1,9 +1,12 @@
 require "recognition/version"
+require "recognition/logger"
 require "recognition/rails/engine"
 require "recognition/rails/railtie"
 require "redis"
 
 module Recognition
+  extend Recognition::Logger
+  
   mattr_accessor :redis
   # Redis Db connection parameters
   @@redis = 'localhost:6378'

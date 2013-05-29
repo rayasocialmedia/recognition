@@ -1,3 +1,7 @@
+Version 0.4.0:
+--------------
+* Major refactoring.
+
 Version 0.3.8:
 --------------
 * acts_as_voucher now may declare a voucher :prefix and :suffix.

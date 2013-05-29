@@ -5,13 +5,14 @@ module Recognition
   module Database
     def self.log id, amount, bucket, code = nil
       hash = Time.now.to_f.to_s
+      Recognition.log :transaction, "hash:'#{hash}' user:'#{id}' amount:'#{amount}' bucket:'#{bucket}'"
       Recognition.backend.multi do
         Recognition.backend.hincrby "recognition:user:#{ id }:counters", 'points', amount
         Recognition.backend.hincrby "recognition:user:#{ id }:counters", bucket, amount
         Recognition.backend.zadd "recognition:user:#{ id }:transactions", hash, { hash: hash, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
         Recognition.backend.zadd 'recognition:transactions', hash, { hash: hash, id: id, amount: amount, bucket: bucket, datetime: DateTime.now.to_s }.to_json
         unless code.nil?
-          Recognition.backend.zadd "recognition:voucher:#{ code }:transactions", hash, { hash: hash, id: id, bucket: bucket, datetime: DateTime.now.to_s }.to_json
+          Recognition.backend.zadd "recognition:#{ code[:type] }:#{ code[:code] }:transactions", hash, { hash: hash, id: id, bucket: bucket, datetime: DateTime.now.to_s }.to_json
         end
       end
     end
@@ -25,24 +26,28 @@ module Recognition
     end
     
     def self.update_points object, action, condition
-      if condition[:bucket].nil?
-        bucket = "#{ object.class.to_s.camelize }:#{ action }"
-      else
-        bucket = condition[:bucket]
-      end
-      user = Recognition::Parser.parse_recognizable(object, condition[:recognizable])
+      Recognition.log 'foo', condition.to_s
+      condition[:bucket] ||= "#{ object.class.to_s.camelize }:#{ action }"
+      user = Recognition::Parser.parse_recognizable(object, condition[:recognizable], condition[:proc_params])
       if condition[:amount].nil? && condition[:gain].nil? && condition[:loss].nil?
+        Recognition.log 'validation', "Unable to determine points: no 'amount', 'gain' or 'loss' specified"
         false
       else
-        total = Recognition::Parser.parse_amount(condition[:amount], object) + Recognition::Parser.parse_amount(condition[:gain], object) - Recognition::Parser.parse_amount(condition[:loss], object)
-        ground_total = user.recognition_counter(bucket) + total
+        total = Recognition::Parser.parse_amount(condition[:amount], object, condition[:proc_params]) + Recognition::Parser.parse_amount(condition[:gain], object, condition[:proc_params]) - Recognition::Parser.parse_amount(condition[:loss], object, condition[:proc_params])
+        ground_total = user.recognition_counter(condition[:bucket]) + total
         if condition[:maximum].nil? || ground_total <= condition[:maximum]
-          Database.log(user.id, total.to_i, bucket)
+          log(user.id, total.to_i, condition[:bucket])
+        else
+          Recognition.log 'validation', "Unable to add points: bucket maximum reached for bucket '#{condition[:bucket]}'"
         end
       end
     end
     
-    private
+    def self.redeem id, bucket, type, code, value
+      certificate = { type: type, code: code }
+      Recognition.log type, "redeeming #{type}:#{code} for user: #{id}"
+      log id, value, bucket, certificate
+    end
     
     def self.get_transactions keypart, start, stop
       transactions = []
