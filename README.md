@@ -104,33 +104,33 @@ This one will:
 
 ### Vouchers
 
-    Use an existing model or generate a new one using:
+Use an existing model or generate a new one using:
 
-        $ rails generate recogintion:voucher
+    $ rails generate recogintion:voucher
 
-    Your model might have the following attributes:
+Your model might have the following attributes:
 
-    *  `:code` **required**
-    *  `:amount` **required**
-    *  `:expires_at` _optional_
-    *  `:reusable` _optional_
+*  `:code` **required**
+*  `:amount` **required**
+*  `:expires_at` _optional_
+*  `:reusable` _optional_
 
-    You can specify the following extra parameters for vouchers:
+You can specify the following extra parameters for vouchers:
 
-    * `:prefix` can be a number, string or method name or even an anonymous function.
-    * `:suffix` can be a number, string or method name or even an anonymous function.
+* `:prefix` can be a number, string or method name or even an anonymous function.
+* `:suffix` can be a number, string or method name or even an anonymous function.
 
-    app/models/voucher.rb:
+app/models/voucher.rb:
 
-        class Voucher < ActiveRecord::Base
-          attr_accessible :code, :amount, :expires_at, :reusable
-            acts_as_voucher code_length: 14
-        end
+    class Voucher < ActiveRecord::Base
+      attr_accessible :code, :amount, :expires_at, :reusable
+        acts_as_voucher code_length: 14
+    end
 
-    Then, you may do:
+Then, you may do:
 
-        voucher = Voucher.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
-        voucher.redeem current_user
+    voucher = Voucher.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
+    voucher.redeem current_user
 
 ### Gifts
 
