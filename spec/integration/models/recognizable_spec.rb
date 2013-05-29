@@ -5,11 +5,11 @@ describe "Recognizable" do
     @user ||= User.create!(name: "John Doe")
   end
   
-  it "user responds to .points method" do
+  it "responds to .points method" do
     @user.points.should be_a_kind_of Numeric
   end
   
-  it "user gains initial points after creation" do
+  it "gains initial points after creation" do
     @user.points.should eq 5
   end
 end

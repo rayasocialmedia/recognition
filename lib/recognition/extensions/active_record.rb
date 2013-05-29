@@ -53,16 +53,28 @@ module Recognition
           after_save :recognize_creating
         end
 
-        # to be called from user-model
         def acts_as_voucher options = {}
           require "recognition/models/voucher"
           include Recognition::Models::Voucher
           self.recognitions = options
-          cattr_accessor :voucher_validators
+          cattr_accessor :redemption_validators
           def self.validates_voucher_redmeption validators
-            self.voucher_validators ||= []
-            self.voucher_validators << validators
-            self.voucher_validators.flatten!
+            self.redemption_validators ||= []
+            self.redemption_validators << validators
+            self.redemption_validators.flatten!
+          end
+          before_create :regenerate_code
+        end
+
+        def acts_as_gift options = {}
+          require "recognition/models/gift"
+          include Recognition::Models::Gift
+          self.recognitions = options
+          cattr_accessor :redemption_validators
+          def self.validates_gift_redmeption validators
+            self.redemption_validators ||= []
+            self.redemption_validators << validators
+            self.redemption_validators.flatten!
           end
           before_create :regenerate_code
         end

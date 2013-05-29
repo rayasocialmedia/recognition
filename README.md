@@ -80,37 +80,8 @@ app/controllers/profiles_controller.rb:
       end
     end
 
-### Vouchers
+Example:
 
-Use an existing model or generate a new one using:
-
-    $ rails generate recogintion:voucher
-
-Your model might have the following attributes:
-
-*  `:code` **required**
-*  `:amount` **required**
-*  `:expires_at` _optional_
-*  `:reusable` _optional_
-
-You can specify the following extra parameters for vouchers:
-
-* `:prefix` can be a number, string or method name or even an anonymous function.
-* `:suffix` can be a number, string or method name or even an anonymous function.
-
-app/models/voucher.rb:
-
-    class Voucher < ActiveRecord::Base
-      attr_accessible :code, :amount, :expires_at, :reusable
-        acts_as_voucher code_length: 14
-    end
-
-Then, you may do:
-
-    voucher = Voucher.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
-    voucher.redeem current_user
-
-## Example
 The following won't work:
 
     class Post < ActiveRecord::Base
@@ -131,6 +102,65 @@ This one will:
       recognize :user, for: :foo, gain: 2
     end
 
+### Vouchers
+
+    Use an existing model or generate a new one using:
+
+        $ rails generate recogintion:voucher
+
+    Your model might have the following attributes:
+
+    *  `:code` **required**
+    *  `:amount` **required**
+    *  `:expires_at` _optional_
+    *  `:reusable` _optional_
+
+    You can specify the following extra parameters for vouchers:
+
+    * `:prefix` can be a number, string or method name or even an anonymous function.
+    * `:suffix` can be a number, string or method name or even an anonymous function.
+
+    app/models/voucher.rb:
+
+        class Voucher < ActiveRecord::Base
+          attr_accessible :code, :amount, :expires_at, :reusable
+            acts_as_voucher code_length: 14
+        end
+
+    Then, you may do:
+
+        voucher = Voucher.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
+        voucher.redeem current_user
+
+### Gifts
+
+Use an existing model or generate a new one using:
+
+$ rails generate recogintion:gift
+
+Your model might have the following attributes:
+
+*  `:code` **required**
+*  `:amount` **required**
+*  `:expires_at` _optional_
+*  `:reusable` _optional_
+
+You can specify the following extra parameters for gifts:
+
+* `:prefix` can be a number, string or method name or even an anonymous function.
+* `:suffix` can be a number, string or method name or even an anonymous function.
+
+app/models/gift.rb:
+
+    class Gift < ActiveRecord::Base
+      attr_accessible :code, :amount, :expires_at, :reusable
+        acts_as_gift code_length: 14
+    end
+
+Then, you may do:
+
+    gift = Gift.create!(amount: 20, expires_at: (DateTime.now + 1.day), reusable: true)
+    gift.redeem current_user
 
 ## Contributing
 

@@ -59,4 +59,5 @@ describe "Recognizer" do
     @product.false_buying @another_user
     @another_user.points.should eq 5
   end
+  
 end

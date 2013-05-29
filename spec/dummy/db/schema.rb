@@ -11,7 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130515142946) do
+ActiveRecord::Schema.define(:version => 20130529111800) do
+
+  create_table "gifts", :force => true do |t|
+    t.string   "code"
+    t.integer  "amount"
+    t.boolean  "reusable",   :default => false
+    t.datetime "expires_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
+  end
 
   create_table "posts", :force => true do |t|
     t.string   "title"

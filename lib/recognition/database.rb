@@ -29,17 +29,22 @@ module Recognition
       Recognition.log 'foo', condition.to_s
       condition[:bucket] ||= "#{ object.class.to_s.camelize }:#{ action }"
       user = Recognition::Parser.parse_recognizable(object, condition[:recognizable], condition[:proc_params])
-      if condition[:amount].nil? && condition[:gain].nil? && condition[:loss].nil?
-        Recognition.log 'validation', "Unable to determine points: no 'amount', 'gain' or 'loss' specified"
-        false
-      else
-        total = Recognition::Parser.parse_amount(condition[:amount], object, condition[:proc_params]) + Recognition::Parser.parse_amount(condition[:gain], object, condition[:proc_params]) - Recognition::Parser.parse_amount(condition[:loss], object, condition[:proc_params])
-        ground_total = user.recognition_counter(condition[:bucket]) + total
-        if condition[:maximum].nil? || ground_total <= condition[:maximum]
-          log(user.id, total.to_i, condition[:bucket])
+      # Do we have a valid user?
+      if user.respond_to?(:points)
+        if condition[:amount].nil? && condition[:gain].nil? && condition[:loss].nil?
+          Recognition.log 'validation', "Unable to determine points: no 'amount', 'gain' or 'loss' specified"
+          false
         else
-          Recognition.log 'validation', "Unable to add points: bucket maximum reached for bucket '#{condition[:bucket]}'"
+          total = Recognition::Parser.parse_amount(condition[:amount], object, condition[:proc_params]) + Recognition::Parser.parse_amount(condition[:gain], object, condition[:proc_params]) - Recognition::Parser.parse_amount(condition[:loss], object, condition[:proc_params])
+          ground_total = user.recognition_counter(condition[:bucket]) + total
+          if condition[:maximum].nil? || ground_total <= condition[:maximum]
+            log(user.id, total.to_i, condition[:bucket])
+          else
+            Recognition.log 'validation', "Unable to add points: bucket maximum reached for bucket '#{condition[:bucket]}'"
+          end
         end
+      else
+        Recognition.log 'validation', "Unable to add points to #{condition[:recognizable]}, make sure it 'acts_as_recognizable'"
       end
     end
     

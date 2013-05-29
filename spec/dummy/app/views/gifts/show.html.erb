@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Code:</b>
+  <%= @gift.code %>
+</p>
+
+<p>
+  <b>Amount:</b>
+  <%= @gift.amount %>
+</p>
+
+<p>
+  <b>Reusable:</b>
+  <%= @gift.reusable %>
+</p>
+
+<p>
+  <b>Expires at:</b>
+  <%= @gift.expires_at %>
+</p>
+
+
+<%= link_to 'Edit', edit_gift_path(@gift) %> |
+<%= link_to 'Back', gifts_path %>

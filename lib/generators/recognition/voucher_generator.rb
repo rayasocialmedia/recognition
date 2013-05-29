@@ -1,6 +1,8 @@
 module Recognition
   module Generators
-    class VoucherGenerator < Rails::Generators::Base
+    class VoucherGenerator < ::Rails::Generators::Base
+      desc "Generates a Recognition Voucher"
+
       def scaffold
         generate 'scaffold voucher code amount:integer reusable:boolean expires_at:datetime'
       end

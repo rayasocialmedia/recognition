@@ -1,0 +1,29 @@
+<h1>Listing gifts</h1>
+
+<table>
+  <tr>
+    <th>Code</th>
+    <th>Amount</th>
+    <th>Reusable</th>
+    <th>Expires at</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @gifts.each do |gift| %>
+  <tr>
+    <td><%= gift.code %></td>
+    <td><%= gift.amount %></td>
+    <td><%= gift.reusable %></td>
+    <td><%= gift.expires_at %></td>
+    <td><%= link_to 'Show', gift %></td>
+    <td><%= link_to 'Edit', edit_gift_path(gift) %></td>
+    <td><%= link_to 'Destroy', gift, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Gift', new_gift_path %>
