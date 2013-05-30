@@ -12,7 +12,7 @@ module Recognition
             pass = true
           end
         else
-          errors.add(:base, "#{self.class.to_s} has already been redeemed")
+          errors.add(:base, "#{self.class.to_s} can not be redeemed: insufficient points")
           pass = false
         end
         pass
