@@ -16,7 +16,7 @@ module Recognition
 
     def logging? #:nodoc:
       # TODO: Add an option to toggle logging
-      false
+      Recognition.debug
     end
   end
 end

@@ -1,3 +1,7 @@
+Version 0.6.0:
+--------------
+* Adding an optional debug parameter to initializer, defaults to false.
+
 Version 0.5.0:
 --------------
 * Adding gifts.

@@ -26,7 +26,6 @@ module Recognition
     end
     
     def self.update_points object, action, condition
-      Recognition.log 'foo', condition.to_s
       condition[:bucket] ||= "#{ object.class.to_s.camelize }:#{ action }"
       user = Recognition::Parser.parse_recognizable(object, condition[:recognizable], condition[:proc_params])
       # Do we have a valid user?

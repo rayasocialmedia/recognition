@@ -11,6 +11,10 @@ module Recognition
   # Redis Db connection parameters
   @@redis = 'localhost:6378'
 
+  mattr_accessor :debug
+  # Show debugging messages in log
+  @@debug = false
+
   mattr_accessor :backend
   # Redis Db active connection
   @@backend = nil
