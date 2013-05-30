@@ -1,12 +1,9 @@
 require "recognition/version"
-require "recognition/logger"
 require "recognition/rails/engine"
 require "recognition/rails/railtie"
 require "redis"
 
 module Recognition
-  extend Recognition::Logger
-  
   mattr_accessor :redis
   # Redis Db connection parameters
   @@redis = 'localhost:6378'
@@ -15,6 +12,10 @@ module Recognition
   # Show debugging messages in log
   @@debug = false
 
+  mattr_accessor :logger
+  # Set logger class
+  @@logger = ::Logger.new(STDOUT)
+
   mattr_accessor :backend
   # Redis Db active connection
   @@backend = nil
@@ -22,6 +23,10 @@ module Recognition
   # Initialize recognition
   def self.setup
     yield self
+  end
+  
+  def self.log key, message
+    Recognition.logger.info("[recognition] [#{key}] #{message}") if Recognition.debug
   end
   
   # Connect to Redis Db

@@ -1,6 +1,6 @@
-require "recognition/extensions/active_record"
-require "recognition/extensions/action_controller"
-require "rails"
+require 'recognition/extensions/active_record'
+require 'recognition/extensions/action_controller'
+require 'rails'
 
 module Recognition
   class Railtie < ::Rails::Railtie
@@ -11,6 +11,9 @@ module Recognition
       ActiveSupport.on_load(:action_controller) do
         ActionController::Base.send(:include, Recognition::Extensions::ActionController)
       end
+    end
+    initializer 'recognition.logger' do
+      Recognition.logger = ::Rails.logger
     end
   end
 end

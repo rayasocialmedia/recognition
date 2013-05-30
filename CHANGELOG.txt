@@ -1,3 +1,11 @@
+Version 0.8.0:
+--------------
+* Appending errors to voucher and gift if they can't be redeemed.
+
+Version 0.7.0:
+--------------
+* Now we have a working logger.
+
 Version 0.6.0:
 --------------
 * Adding an optional debug parameter to initializer, defaults to false.

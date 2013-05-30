@@ -15,20 +15,6 @@ describe "Voucher" do
     @user.points.should eq 45
   end
 
-  it "can be redeemed only once per user" do
-    @voucher.redeem @user
-    @voucher.redeem @user
-    @voucher.redeem @user
-    @user.points.should eq 45
-  end
-
-  it "can be redeemed only once if it is disposable" do
-    @another_user ||= User.create!(name: "Jane Smith")
-    @voucher.redeem @user
-    @voucher.redeem @another_user
-    @another_user.points.should eq 5
-  end
-
   it "marked as reusable can be redeemed by multiple users" do
     @another_user ||= User.create!(name: "Jane Smith")
     @reusable_voucher = Voucher.create!(amount: 20, reusable: true)
@@ -37,22 +23,52 @@ describe "Voucher" do
     @another_user.points.should eq 25
   end
 
-  it "can not be redeemed if it expired" do
-    @another_voucher = Voucher.create!(amount: 10, expires_at: DateTime.now)
-    @another_voucher.redeem @user
-    @user.points.should eq 5
-  end
-
   it "can be redeemed if it expires in the future" do
     @another_voucher = Voucher.create!(amount: 13, expires_at: (DateTime.now + 1.day))
     @another_voucher.redeem @user
     @user.points.should eq 18
   end
 
-  it "can not be redeemed if custom validators returned false" do
-    @another_voucher = Voucher.create!(amount: 1000)
-    @another_voucher.redeem @user
-    @user.points.should eq 5
+  context 'validates' do
+    it "can be redeemed only once per user" do
+      @voucher.redeem @user
+      @voucher.redeem @user
+      @voucher.redeem @user
+      @user.points.should eq 45
+    end
+
+    it "can be redeemed only once if it is disposable" do
+      @another_user ||= User.create!(name: "Jane Smith")
+      @voucher.redeem @user
+      @voucher.redeem @another_user
+      @another_user.points.should eq 5
+    end
+
+    it "can not be redeemed if it expired" do
+      @another_voucher = Voucher.create!(amount: 10, expires_at: DateTime.now)
+      @another_voucher.redeem @user
+      @user.points.should eq 5
+    end
+
+    it "can not be redeemed if custom validators returned false" do
+      @another_voucher = Voucher.create!(amount: 1000)
+      @another_voucher.redeem @user
+      @user.points.should eq 5
+    end
   end
 
+  context 'error' do
+    it "message specified if it has already been redeemed" do
+      @another_user ||= User.create!(name: "Jane Smith")
+      @voucher.redeem @user
+      @voucher.redeem @another_user
+      @voucher.errors.messages.count.should eq 1
+    end
+
+    it "message specified if it expired" do
+      @another_voucher = Voucher.create!(amount: 10, expires_at: DateTime.now)
+      @another_voucher.redeem @user
+      @another_voucher.errors.messages.count.should eq 1
+    end
+  end
 end

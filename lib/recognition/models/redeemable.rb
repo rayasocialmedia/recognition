@@ -27,16 +27,21 @@ module Recognition
         # only check if the redeemable did not expire
         if expired?
           Recognition.log self.class.to_s.downcase.to_sym, "validation error for #{self.class.to_s}##{self.id}: expired"
+          errors.add(:base, "#{self.class.to_s} expired")
         else
           # has the redeemable ever been redeemed?
           if transactions.any?
             # has the redeemable ever been redeemed by this user?
             if get_user_counter(recognizable.id) != 0
               Recognition.log self.class.to_s.downcase.to_sym, "validation error for #{self.class.to_s}##{self.id}: user has already redeemed the voucher"
+              errors.add(:base, "#{self.class.to_s} has already been redeemed")
               pass = false
               # is the redeemable reusable?
             elsif defined?(self.reusable?) && self.reusable?
               pass = true
+            else
+              errors.add(:base, "#{self.class.to_s} has already been redeemed")
+              pass = false
             end
           else
             pass = true

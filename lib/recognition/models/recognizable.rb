@@ -1,3 +1,5 @@
+require 'recognition/database'
+
 module Recognition
   module Models
     module Recognizable

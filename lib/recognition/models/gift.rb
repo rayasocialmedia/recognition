@@ -6,7 +6,16 @@ module Recognition
       include Recognition::Models::Redeemable
       
       def redeemable? recognizable
-        recognizable.points >= self.amount && is_redeemable?(recognizable)
+        pass = false
+        if recognizable.points >= self.amount
+          if is_redeemable?(recognizable)
+            pass = true
+          end
+        else
+          errors.add(:base, "#{self.class.to_s} has already been redeemed")
+          pass = false
+        end
+        pass
       end
       
       def execute_redemption id
