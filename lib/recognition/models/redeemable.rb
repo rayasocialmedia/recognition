@@ -51,25 +51,28 @@ module Recognition
       end
       
       def redeem recognizable
+        pass = false
         # Make sure we have an amount beforehand
         if defined? self.amount
           if self.redeemable? recognizable
             # Call custom validators
-            if defined? self.class.redemption_validators
+            if self.class.redemption_validators.present?
               self.class.redemption_validators.each do |validator|
                 # quit if any validator returned false
                 if send(validator) == false
                   Recognition.log self.class.to_s.downcase.to_sym, "validation error for #{self.class.to_s}##{self.id}: custom validation error"
-                  return
+                  return pass
                 end
               end
             end
             # If all went well:
             execute_redemption recognizable.id
+            pass = true
           end
         else
           Recognition.log self.class.to_s.downcase.to_sym, "validation error for #{self.class.to_s}##{self.id}: amount is nil"
         end
+        pass
       end
       
     

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    recognition (0.8.1)
+    recognition (0.8.3)
       rails (~> 3.2.9)
       redis
 

@@ -30,6 +30,11 @@ describe "Gift" do
   end
 
   context 'validates' do
+    it "returns false if it can not be redeemed" do
+      @another_gift = Gift.create!(amount: 50)
+      @another_gift.redeem(@user).should eq false
+    end
+
     it "can not be redeemed if the user has not enough points" do
       @another_gift = Gift.create!(amount: 50)
       @another_gift.redeem @user

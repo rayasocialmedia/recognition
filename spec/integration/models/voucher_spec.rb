@@ -55,6 +55,11 @@ describe "Voucher" do
       @another_voucher.redeem @user
       @user.points.should eq 5
     end
+
+    it "returns false if custom validators returned false" do
+      @another_voucher = Voucher.create!(amount: 1000)
+      @another_voucher.redeem(@user).should eq false
+    end
   end
 
   context 'error' do
