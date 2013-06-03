@@ -31,6 +31,7 @@ module Recognition
         else
           # has the redeemable ever been redeemed?
           if transactions.any?
+            Recognition.log 'debug', get_user_counter(recognizable.id)
             # has the redeemable ever been redeemed by this user?
             if get_user_counter(recognizable.id) != 0
               Recognition.log self.class.to_s.downcase.to_sym, "validation error for #{self.class.to_s}##{self.id}: user has already redeemed the voucher"
@@ -81,7 +82,7 @@ module Recognition
       end
       
       def get_user_counter id
-        Recognition::Database.get_counter "user:#{id}", bucket
+        Recognition::Database.get_user_counter id, bucket
       end
       
       def transactions page = 0, per = 20

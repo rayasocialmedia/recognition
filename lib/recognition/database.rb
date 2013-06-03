@@ -25,6 +25,10 @@ module Recognition
       Recognition.backend.hget("recognition:#{hash}", key).to_i
     end
     
+    def self.get_user_counter id, key
+      get_counter "user:#{id}:counters", key
+    end
+    
     def self.update_points object, action, condition
       condition[:bucket] ||= "#{ object.class.to_s.camelize }:#{ action }"
       user = Recognition::Parser.parse_recognizable(object, condition[:recognizable], condition[:proc_params])

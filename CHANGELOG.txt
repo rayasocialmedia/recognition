@@ -1,3 +1,7 @@
+Version 0.8.4:
+--------------
+* Fixing a bug with reusable vouchers being redeemable by the same user multiple times.
+
 Version 0.8.3:
 --------------
 * .redeem() now returns false if redemption failed.

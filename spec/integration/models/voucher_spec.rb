@@ -37,6 +37,14 @@ describe "Voucher" do
       @user.points.should eq 45
     end
 
+    it "can be redeemed only once per user even if it is disposable" do
+      @reusable_voucher = Voucher.create!(amount: 20, reusable: true)
+      @reusable_voucher.redeem @user
+      @reusable_voucher.redeem @user
+      @reusable_voucher.redeem @user
+      @user.points.should eq 25
+    end
+
     it "can be redeemed only once if it is disposable" do
       @another_user ||= User.create!(name: "Jane Smith")
       @voucher.redeem @user

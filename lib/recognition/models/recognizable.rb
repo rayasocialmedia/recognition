@@ -9,7 +9,7 @@ module Recognition
       end
 
       def recognition_counter bucket
-        Recognition::Database.get_counter "user:#{ self.id }:counters", bucket
+        Recognition::Database.get_user_counter self.id, bucket
       end
 
       def add_initial_points
