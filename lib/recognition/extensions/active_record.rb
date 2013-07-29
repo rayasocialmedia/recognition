@@ -17,7 +17,7 @@ module Recognition
           self.recognitions[:initial] = {
             amount: options[:initial]
           }
-          after_save :add_initial_points
+          after_create :add_initial_points
         end
   
         # to be called from other models

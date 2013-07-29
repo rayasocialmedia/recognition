@@ -1,3 +1,7 @@
+Version 0.8.6:
+--------------
+* Fixing the bug of initial points to the recognizable to be added after_create not after_save
+
 Version 0.8.5:
 --------------
 * Refactoring: Merging Railtie with Rails Engine.
